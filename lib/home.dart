@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:employee_schedule_management/calendar.dart';
 import 'package:employee_schedule_management/location/location_service.dart';
+import 'package:employee_schedule_management/login.dart';
 import 'package:employee_schedule_management/profile.dart';
 import 'package:employee_schedule_management/todayscreen.dart';
 import 'package:employee_schedule_management/model/user.dart';
@@ -27,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     FontAwesomeIcons.calendarAlt,
     FontAwesomeIcons.check,
     FontAwesomeIcons.user,
+    FontAwesomeIcons.signOut,
   ];
 
   @override
@@ -139,6 +141,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       setState(() {
                         currentIndex = i;
                       });
+                      if (i == 3) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginScreen()));
+                      }
                     },
                     child: Container(
                       height: screenHeight,
