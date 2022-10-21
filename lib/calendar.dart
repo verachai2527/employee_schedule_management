@@ -121,6 +121,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                         .collection("Employee")
                         .doc(UserModel.id)
                         .collection("Record")
+                        .orderBy('date', descending: true)
                         .snapshots(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {

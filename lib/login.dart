@@ -53,11 +53,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               child: Center(
-                child: Icon(
-                  Icons.person,
-                  color: Colors.white,
-                  size: screenWidth / 5,
-                ),
+                child: buildLogo(),
+                // Icon(
+                //   Icons.person,
+                //   color: Colors.white,
+                //   size: screenWidth / 5,
+                // ),
               ),
             ),
             Container(
@@ -250,4 +251,9 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+
+  Container buildLogo() => Container(
+        width: screenWidth * 0.4,
+        child: MyStyle().showLogo(),
+      );
 }
