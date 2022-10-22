@@ -90,7 +90,7 @@ class _TodayScreenState extends State<TodayScreen> {
   //         String checkIn = snap2['checkIn'];
 
   //         setState(() {
-  //           checkOut = DateFormat('hh:mm').format(DateTime.now());
+  //           checkOut = DateFormat('HH:mm').format(DateTime.now());
   //         });
 
   //         await FirebaseFirestore.instance
@@ -101,12 +101,12 @@ class _TodayScreenState extends State<TodayScreen> {
   //             .update({
   //           'date': Timestamp.now(),
   //           'checkIn': checkIn,
-  //           'checkOut': DateFormat('hh:mm').format(DateTime.now()),
+  //           'checkOut': DateFormat('HH:mm').format(DateTime.now()),
   //           'checkInLocation': location,
   //         });
   //       } catch (e) {
   //         setState(() {
-  //           checkIn = DateFormat('hh:mm').format(DateTime.now());
+  //           checkIn = DateFormat('HH:mm').format(DateTime.now());
   //         });
 
   //         await FirebaseFirestore.instance
@@ -116,7 +116,7 @@ class _TodayScreenState extends State<TodayScreen> {
   //             .doc(DateFormat('dd MMMM yyyy').format(DateTime.now()))
   //             .set({
   //           'date': Timestamp.now(),
-  //           'checkIn': DateFormat('hh:mm').format(DateTime.now()),
+  //           'checkIn': DateFormat('HH:mm').format(DateTime.now()),
   //           'checkOut': "--/--",
   //           'checkOutLocation': location,
   //         });
@@ -141,7 +141,7 @@ class _TodayScreenState extends State<TodayScreen> {
   //           String checkIn = snap2['checkIn'];
 
   //           setState(() {
-  //             checkOut = DateFormat('hh:mm').format(DateTime.now());
+  //             checkOut = DateFormat('HH:mm').format(DateTime.now());
   //           });
 
   //           await FirebaseFirestore.instance
@@ -152,12 +152,12 @@ class _TodayScreenState extends State<TodayScreen> {
   //               .update({
   //             'date': Timestamp.now(),
   //             'checkIn': checkIn,
-  //             'checkOut': DateFormat('hh:mm').format(DateTime.now()),
+  //             'checkOut': DateFormat('HH:mm').format(DateTime.now()),
   //             'checkInLocation': location,
   //           });
   //         } catch (e) {
   //           setState(() {
-  //             checkIn = DateFormat('hh:mm').format(DateTime.now());
+  //             checkIn = DateFormat('HH:mm').format(DateTime.now());
   //           });
 
   //           await FirebaseFirestore.instance
@@ -167,7 +167,7 @@ class _TodayScreenState extends State<TodayScreen> {
   //               .doc(DateFormat('dd MMMM yyyy').format(DateTime.now()))
   //               .set({
   //             'date': Timestamp.now(),
-  //             'checkIn': DateFormat('hh:mm').format(DateTime.now()),
+  //             'checkIn': DateFormat('HH:mm').format(DateTime.now()),
   //             'checkOut': "--/--",
   //             'checkOutLocation': location,
   //           });
@@ -207,8 +207,6 @@ class _TodayScreenState extends State<TodayScreen> {
           .where('id', isEqualTo: UserModel.employeeId)
           .get();
       print('EmployeeID:' + snap.docs[0].id);
-      List<String> keys = [];
-      keys.add(DateFormat('dd MMMM yyyy').format(DateTime.now()));
       QuerySnapshot snap2 = await FirebaseFirestore.instance
           .collection("Employee")
           .doc(snap.docs[0].id)
@@ -217,11 +215,15 @@ class _TodayScreenState extends State<TodayScreen> {
           .get();
       // .doc(DateFormat('dd MMMM yyyy').format(DateTime.now()))
       // .get();
-      print('checkIn:' + snap2.docs[0]['checkIn']);
-      print('checkOut:' + snap2.docs[0]['checkOut']);
       setState(() {
-        checkIn = snap2.docs[0]['checkIn'];
-        checkOut = snap2.docs[0]['checkOut'];
+        if (DateFormat('dd MMMM yyyy').format(snap2.docs[0]['date'].toDate()) ==
+            DateFormat('dd MMMM yyyy').format(DateTime.now())) {
+          checkIn = snap2.docs[0]['checkIn'];
+          checkOut = snap2.docs[0]['checkOut'];
+        } else {
+          checkIn = "--/--";
+          checkOut = "--/--";
+        }
       });
     } catch (e) {
       print('error:' + e.toString());
@@ -376,7 +378,7 @@ class _TodayScreenState extends State<TodayScreen> {
                   return Container(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      DateFormat('hh:mm:ss a').format(DateTime.now()),
+                      DateFormat('HH:mm:ss a').format(DateTime.now()),
                       style: TextStyle(
                         fontFamily: "NexaRegular",
                         fontSize: screenWidth / 20,
@@ -439,7 +441,7 @@ class _TodayScreenState extends State<TodayScreen> {
                             if (s_checkOut == "--/--") {
                               setState(() {
                                 checkOut =
-                                    DateFormat('hh:mm').format(DateTime.now());
+                                    DateFormat('HH:mm').format(DateTime.now());
                               });
 
                               // await FirebaseFirestore.instance
@@ -454,7 +456,7 @@ class _TodayScreenState extends State<TodayScreen> {
                               //   'date': Timestamp.now(),
                               //   'checkIn': s_checkIn,
                               //   'checkOut':
-                              //       DateFormat('hh:mm').format(DateTime.now()),
+                              //       DateFormat('HH:mm').format(DateTime.now()),
                               //   'checkInLocation': location,
                               // });
                               QuerySnapshot snap3 = await FirebaseFirestore
@@ -468,14 +470,14 @@ class _TodayScreenState extends State<TodayScreen> {
                                 'date': Timestamp.now(),
                                 'checkIn': s_checkIn,
                                 'checkOut':
-                                    DateFormat('hh:mm').format(DateTime.now()),
+                                    DateFormat('HH:mm').format(DateTime.now()),
                                 'checkInLocation': location,
                               };
                               snap3.docs[0].reference.update(record);
                             } else {
                               setState(() {
                                 checkIn =
-                                    DateFormat('hh:mm').format(DateTime.now());
+                                    DateFormat('HH:mm').format(DateTime.now());
                                 checkOut = "--/--";
                               });
 
@@ -486,12 +488,12 @@ class _TodayScreenState extends State<TodayScreen> {
                                   .doc(DateFormat('dd MMMM yyyy')
                                           .format(DateTime.now()) +
                                       " " +
-                                      DateFormat('hh:mm')
+                                      DateFormat('HH:mm')
                                           .format(DateTime.now()))
                                   .set({
                                 'date': Timestamp.now(),
                                 'checkIn':
-                                    DateFormat('hh:mm').format(DateTime.now()),
+                                    DateFormat('HH:mm').format(DateTime.now()),
                                 'checkOut': "--/--",
                                 'checkOutLocation': location,
                               });
@@ -499,7 +501,7 @@ class _TodayScreenState extends State<TodayScreen> {
                           } catch (e) {
                             setState(() {
                               checkIn =
-                                  DateFormat('hh:mm').format(DateTime.now());
+                                  DateFormat('HH:mm').format(DateTime.now());
                             });
 
                             await FirebaseFirestore.instance
@@ -509,11 +511,11 @@ class _TodayScreenState extends State<TodayScreen> {
                                 .doc(DateFormat('dd MMMM yyyy')
                                         .format(DateTime.now()) +
                                     " " +
-                                    DateFormat('hh:mm').format(DateTime.now()))
+                                    DateFormat('HH:mm').format(DateTime.now()))
                                 .set({
                               'date': Timestamp.now(),
                               'checkIn':
-                                  DateFormat('hh:mm').format(DateTime.now()),
+                                  DateFormat('HH:mm').format(DateTime.now()),
                               'checkOut': "--/--",
                               'checkOutLocation': location,
                             });
@@ -550,7 +552,7 @@ class _TodayScreenState extends State<TodayScreen> {
                               String s_checkOut = snap2.docs[0]['checkOut'];
                               if (s_checkOut == "--/--") {
                                 setState(() {
-                                  checkOut = DateFormat('hh:mm')
+                                  checkOut = DateFormat('HH:mm')
                                       .format(DateTime.now());
                                 });
 
@@ -565,7 +567,7 @@ class _TodayScreenState extends State<TodayScreen> {
                                 //     .update({
                                 //   'date': Timestamp.now(),
                                 //   'checkIn': s_checkIn,
-                                //   'checkOut': DateFormat('hh:mm')
+                                //   'checkOut': DateFormat('HH:mm')
                                 //       .format(DateTime.now()),
                                 //   'checkInLocation': location,
                                 // });
@@ -579,14 +581,14 @@ class _TodayScreenState extends State<TodayScreen> {
                                 Map<String, dynamic> record = {
                                   'date': Timestamp.now(),
                                   'checkIn': s_checkIn,
-                                  'checkOut': DateFormat('hh:mm')
+                                  'checkOut': DateFormat('HH:mm')
                                       .format(DateTime.now()),
                                   'checkInLocation': location,
                                 };
                                 snap3.docs[0].reference.update(record);
                               } else {
                                 setState(() {
-                                  checkIn = DateFormat('hh:mm')
+                                  checkIn = DateFormat('HH:mm')
                                       .format(DateTime.now());
                                 });
 
@@ -597,11 +599,11 @@ class _TodayScreenState extends State<TodayScreen> {
                                     .doc(DateFormat('dd MMMM yyyy')
                                             .format(DateTime.now()) +
                                         " " +
-                                        DateFormat('hh:mm')
+                                        DateFormat('HH:mm')
                                             .format(DateTime.now()))
                                     .set({
                                   'date': Timestamp.now(),
-                                  'checkIn': DateFormat('hh:mm')
+                                  'checkIn': DateFormat('HH:mm')
                                       .format(DateTime.now()),
                                   'checkOut': "--/--",
                                   'checkOutLocation': location,
@@ -610,7 +612,7 @@ class _TodayScreenState extends State<TodayScreen> {
                             } catch (e) {
                               setState(() {
                                 checkIn =
-                                    DateFormat('hh:mm').format(DateTime.now());
+                                    DateFormat('HH:mm').format(DateTime.now());
                               });
 
                               await FirebaseFirestore.instance
@@ -620,12 +622,12 @@ class _TodayScreenState extends State<TodayScreen> {
                                   .doc(DateFormat('dd MMMM yyyy')
                                           .format(DateTime.now()) +
                                       " " +
-                                      DateFormat('hh:mm')
+                                      DateFormat('HH:mm')
                                           .format(DateTime.now()))
                                   .set({
                                 'date': Timestamp.now(),
                                 'checkIn':
-                                    DateFormat('hh:mm').format(DateTime.now()),
+                                    DateFormat('HH:mm').format(DateTime.now()),
                                 'checkOut': "--/--",
                                 'checkOutLocation': location,
                               });

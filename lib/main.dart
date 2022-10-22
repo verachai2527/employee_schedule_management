@@ -1,4 +1,4 @@
-import 'package:employee_schedule_management/home.dart';
+import 'package:employee_schedule_management/staff_attendance/home.dart';
 import 'package:employee_schedule_management/login.dart';
 import 'package:employee_schedule_management/model/user.dart';
 import 'package:employee_schedule_management/utility/web_firebase_connection.dart';

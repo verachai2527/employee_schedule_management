@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:employee_schedule_management/calendar.dart';
+import 'package:employee_schedule_management/staff_attendance/calendar.dart';
 import 'package:employee_schedule_management/location/location_service.dart';
 import 'package:employee_schedule_management/login.dart';
-import 'package:employee_schedule_management/profile.dart';
-import 'package:employee_schedule_management/todayscreen.dart';
+import 'package:employee_schedule_management/staff_attendance/profile.dart';
+import 'package:employee_schedule_management/staff_attendance/todayscreen.dart';
 import 'package:employee_schedule_management/model/user.dart';
 import 'package:employee_schedule_management/utility/my_style.dart';
 import 'package:flutter/material.dart';
