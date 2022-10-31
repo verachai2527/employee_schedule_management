@@ -8,6 +8,7 @@ import 'package:employee_schedule_management/model/user.dart';
 import 'package:employee_schedule_management/utility/my_style.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -137,11 +138,15 @@ class _HomeScreenState extends State<HomeScreen> {
               for (int i = 0; i < navigationIcons.length; i++) ...<Expanded>{
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       setState(() {
                         currentIndex = i;
                       });
                       if (i == 3) {
+                        late SharedPreferences sharedPreferences;
+                        sharedPreferences =
+                            await SharedPreferences.getInstance();
+                        sharedPreferences.clear();
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(

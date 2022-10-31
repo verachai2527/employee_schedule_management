@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:employee_schedule_management/admin/controllers/menu_controller.dart';
+import 'package:employee_schedule_management/admin/home_page.dart';
 import 'package:employee_schedule_management/staff_attendance/home.dart';
 import 'package:employee_schedule_management/model/user.dart';
 import 'package:employee_schedule_management/utility/my_style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -110,8 +113,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         try {
                           if (password == snap.docs[0]['password']) {
+                            print("test");
+                            String role = snap.docs[0]['role'].toString();
+                            print("role::" + role);
                             sharedPreferences =
                                 await SharedPreferences.getInstance();
+                            sharedPreferences.setString('role', role);
                             sharedPreferences
                                 .setString('employeeId', id)
                                 .then((_) {
@@ -123,7 +130,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          const HomeScreen()));
+                                          snap.docs[0]['role'] == 100
+                                              ? MultiProvider(
+                                                  providers: [
+                                                    ChangeNotifierProvider(
+                                                        create: (context) =>
+                                                            MenuController()),
+                                                  ],
+                                                  child: HomePage(),
+                                                )
+                                              : const HomeScreen()));
                               // Navigator.pushAndRemoveUntil(
                               //     context,
                               //     MaterialPageRoute(

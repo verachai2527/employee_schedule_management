@@ -459,6 +459,18 @@ class _TodayScreenState extends State<TodayScreen> {
                               //       DateFormat('HH:mm').format(DateTime.now()),
                               //   'checkInLocation': location,
                               // });
+                              ////////// update working status
+                              DocumentSnapshot<Map<String, dynamic>>
+                                  employee_get = await FirebaseFirestore
+                                      .instance
+                                      .collection("Employee")
+                                      .doc(snap.docs[0].id)
+                                      .get();
+                              Map<String, dynamic> employee = {
+                                'workingStatus': false,
+                              };
+                              employee_get.reference.update(employee);
+                              ///////////
                               QuerySnapshot snap3 = await FirebaseFirestore
                                   .instance
                                   .collection("Employee")
@@ -466,6 +478,7 @@ class _TodayScreenState extends State<TodayScreen> {
                                   .collection("Record")
                                   .orderBy('date', descending: true)
                                   .get();
+
                               Map<String, dynamic> record = {
                                 'date': Timestamp.now(),
                                 'checkIn': s_checkIn,
@@ -480,7 +493,18 @@ class _TodayScreenState extends State<TodayScreen> {
                                     DateFormat('HH:mm').format(DateTime.now());
                                 checkOut = "--/--";
                               });
-
+                              ////////// update working status
+                              DocumentSnapshot<Map<String, dynamic>>
+                                  employee_get = await FirebaseFirestore
+                                      .instance
+                                      .collection("Employee")
+                                      .doc(snap.docs[0].id)
+                                      .get();
+                              Map<String, dynamic> employee = {
+                                'workingStatus': true,
+                              };
+                              employee_get.reference.update(employee);
+                              ///////////
                               await FirebaseFirestore.instance
                                   .collection("Employee")
                                   .doc(snap.docs[0].id)
@@ -503,7 +527,17 @@ class _TodayScreenState extends State<TodayScreen> {
                               checkIn =
                                   DateFormat('HH:mm').format(DateTime.now());
                             });
-
+                            ////////// update working status
+                            DocumentSnapshot<Map<String, dynamic>>
+                                employee_get = await FirebaseFirestore.instance
+                                    .collection("Employee")
+                                    .doc(snap.docs[0].id)
+                                    .get();
+                            Map<String, dynamic> employee = {
+                              'workingStatus': true,
+                            };
+                            employee_get.reference.update(employee);
+                            ///////////
                             await FirebaseFirestore.instance
                                 .collection("Employee")
                                 .doc(snap.docs[0].id)
@@ -571,6 +605,18 @@ class _TodayScreenState extends State<TodayScreen> {
                                 //       .format(DateTime.now()),
                                 //   'checkInLocation': location,
                                 // });
+                                ////////// update working status
+                                DocumentSnapshot<Map<String, dynamic>>
+                                    employee_get = await FirebaseFirestore
+                                        .instance
+                                        .collection("Employee")
+                                        .doc(snap.docs[0].id)
+                                        .get();
+                                Map<String, dynamic> employee = {
+                                  'workingStatus': false,
+                                };
+                                employee_get.reference.update(employee);
+                                ///////////
                                 QuerySnapshot snap3 = await FirebaseFirestore
                                     .instance
                                     .collection("Employee")
@@ -591,7 +637,18 @@ class _TodayScreenState extends State<TodayScreen> {
                                   checkIn = DateFormat('HH:mm')
                                       .format(DateTime.now());
                                 });
-
+                                ////////// update working status
+                                DocumentSnapshot<Map<String, dynamic>>
+                                    employee_get = await FirebaseFirestore
+                                        .instance
+                                        .collection("Employee")
+                                        .doc(snap.docs[0].id)
+                                        .get();
+                                Map<String, dynamic> employee = {
+                                  'workingStatus': true,
+                                };
+                                employee_get.reference.update(employee);
+                                ///////////
                                 await FirebaseFirestore.instance
                                     .collection("Employee")
                                     .doc(snap.docs[0].id)
@@ -614,7 +671,18 @@ class _TodayScreenState extends State<TodayScreen> {
                                 checkIn =
                                     DateFormat('HH:mm').format(DateTime.now());
                               });
-
+                              ////////// update working status
+                              DocumentSnapshot<Map<String, dynamic>>
+                                  employee_get = await FirebaseFirestore
+                                      .instance
+                                      .collection("Employee")
+                                      .doc(snap.docs[0].id)
+                                      .get();
+                              Map<String, dynamic> employee = {
+                                'workingStatus': true,
+                              };
+                              employee_get.reference.update(employee);
+                              ///////////
                               await FirebaseFirestore.instance
                                   .collection("Employee")
                                   .doc(snap.docs[0].id)

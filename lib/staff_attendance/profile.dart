@@ -191,7 +191,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 'lastName': lastName,
                                 'birthDate': birthDate,
                                 'address': address,
-                                'canEdit': false,
+                                'canEdit': true,
                               }).then((value) {
                                 setState(() {
                                   UserModel.canEdit = false;

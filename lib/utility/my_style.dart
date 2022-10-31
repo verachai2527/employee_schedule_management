@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'BackgroundPainter.dart';
 
 class MyStyle {
-  Color darkColor = Color(0xff389341);
+  Color darkColor = Color.fromARGB(183, 69, 179, 78);
   Color primaryColor = Color.fromARGB(255, 92, 171, 91);
   Color lightColor = Color(0xff9df79d);
+  Color bgColor = Color.fromARGB(255, 50, 66, 50);
   TextStyle darkStyle() => TextStyle(color: darkColor);
   TextStyle whiteStyle() => TextStyle(color: Colors.white);
   TextStyle brownStyle() => TextStyle(color: Color.fromARGB(255, 142, 91, 73));

@@ -1,3 +1,6 @@
+import 'package:employee_schedule_management/admin/controllers/menu_controller.dart';
+import 'package:employee_schedule_management/admin/dashboard/dashboard.dart';
+import 'package:employee_schedule_management/admin/home_page.dart';
 import 'package:employee_schedule_management/staff_attendance/home.dart';
 import 'package:employee_schedule_management/login.dart';
 import 'package:employee_schedule_management/model/user.dart';
@@ -6,6 +9,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:month_year_picker/month_year_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
@@ -47,6 +51,7 @@ class AuthCheck extends StatefulWidget {
 
 class _AuthCheckState extends State<AuthCheck> {
   bool userAvailable = false;
+  String role = '200';
   late SharedPreferences sharedPreferences;
 
   @override
@@ -64,6 +69,7 @@ class _AuthCheckState extends State<AuthCheck> {
         setState(() {
           UserModel.employeeId = sharedPreferences.getString('employeeId')!;
           userAvailable = true;
+          role = sharedPreferences.getString('role')!;
         });
       }
     } catch (e) {
@@ -75,6 +81,21 @@ class _AuthCheckState extends State<AuthCheck> {
 
   @override
   Widget build(BuildContext context) {
-    return userAvailable ? const HomeScreen() : const LoginScreen();
+    return userAvailable
+        ? role == "100"
+            ? MultiProvider(
+                providers: [
+                  ChangeNotifierProvider(create: (context) => MenuController()),
+                ],
+                child: HomePage(),
+              )
+            : const HomeScreen()
+        : const LoginScreen();
+    // return MultiProvider(
+    //   providers: [
+    //     ChangeNotifierProvider(create: (context) => MenuController()),
+    //   ],
+    //   child: HomePage(),
+    // );
   }
 }
