@@ -68,11 +68,11 @@ class _SideBarState extends State<SideBar> {
                             )));
               },
             ),
-            DrawerListTile(
-              title: "Roster",
-              icon: "assets/menu_onboarding.png",
-              press: () {},
-            ),
+            // DrawerListTile(
+            //   title: "Roster",
+            //   icon: "assets/menu_onboarding.png",
+            //   press: () {},
+            // ),
             DrawerListTile(
               title: "Reports",
               icon: "assets/menu_report.png",
@@ -89,11 +89,11 @@ class _SideBarState extends State<SideBar> {
                             )));
               },
             ),
-            DrawerListTile(
-              title: "Calendar",
-              icon: "assets/menu_calendar.png",
-              press: () {},
-            ),
+            // DrawerListTile(
+            //   title: "Calendar",
+            //   icon: "assets/menu_calendar.png",
+            //   press: () {},
+            // ),
             DrawerListTile(
               title: "Logout",
               icon: "assets/menu_calendar.png",

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:employee_schedule_management/model/user.dart';
+import 'package:employee_schedule_management/admin/common/app_colors.dart';
+import 'package:employee_schedule_management/admin/common/app_responsive.dart';
+import 'package:employee_schedule_management/model/employee_model.dart';
 import 'package:employee_schedule_management/utility/my_style.dart';
 import 'package:employee_schedule_management/utility/web_firebase_connection.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,7 +26,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
+  TextEditingController positionController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  TextEditingController employeeIDController = TextEditingController();
+  List<EmployeeModel> employees = [];
+  EmployeeModel employeeModel = EmployeeModel();
+  String employeeID = "";
+  @override
+  void initState() {
+    super.initState();
+
+    _getRecord();
+  }
+
+  void _getRecord() async {
+    try {
+      await Firebase.initializeApp(
+        options: firebaseOptions(),
+      );
+      final users = await FirebaseFirestore.instance
+          .collection("Employee")
+          .where('role', isEqualTo: 200)
+          .get();
+      List<DocumentSnapshot> snapshots = users.docs;
+      for (var snapshot in snapshots) {
+        Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+
+        EmployeeModel userModel = EmployeeModel.fromMap(data);
+        userModel.uid = snapshot.id;
+        setState(() {
+          employees.add(userModel);
+          // employeeModel.setEmployeeToUserModel(userModel);
+        });
+      }
+    } catch (e) {
+      e.toString();
+    }
+  }
 
   void pickUploadProfilePic() async {
     final image = await ImagePicker().pickImage(
@@ -33,21 +71,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
       maxWidth: 512,
       imageQuality: 90,
     );
-    if (UserModel != "") {
+    // print(image!.path);
+    if (employeeModel != null && employeeModel != "") {
       Reference ref = FirebaseStorage.instance
           .ref()
-          .child("${UserModel.employeeId.toLowerCase()}_profilepic.jpg");
+          .child("${employeeModel.id.toLowerCase()}_profilepic.jpg");
 
       await ref.putFile(File(image!.path));
 
       ref.getDownloadURL().then((value) async {
         setState(() {
-          UserModel.profilePicLink = value;
+          employeeModel.profilePicLink = value;
         });
 
         await FirebaseFirestore.instance
             .collection("Employee")
-            .doc(UserModel.id)
+            .doc(employeeModel.id)
             .update({
           'profilePic': value,
         });
@@ -55,13 +94,196 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Container employeeList() {
+    return Container(
+      width: 350,
+      height: screenHeight,
+      alignment: Alignment.topLeft,
+      decoration: BoxDecoration(
+          color: AppColor.white, borderRadius: BorderRadius.circular(20)),
+      padding: EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Employees List",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: AppColor.black,
+                  fontSize: 18,
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                    color: MyStyle().darkColor,
+                    borderRadius: BorderRadius.circular(100)),
+                padding: EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 20,
+                ),
+                child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        employeeModel = EmployeeModel();
+                        firstNameController.text = employeeModel.firstName;
+                        lastNameController.text = employeeModel.lastName;
+                        addressController.text = employeeModel.address;
+                        birth = employeeModel.birthDate;
+                        positionController.text = employeeModel.position;
+                        employeeID = employeeModel.id;
+                      });
+                    },
+                    child: Text(
+                      "Add Employee",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: AppColor.black),
+                    )),
+              )
+            ],
+          ),
+          Divider(
+            thickness: 0.5,
+            color: Colors.grey,
+          ),
+          Table(
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            children: [
+              /// Table Header
+              TableRow(
+                decoration: BoxDecoration(
+                  border: Border(
+                      bottom: BorderSide(
+                    color: Colors.grey,
+                    width: 0.5,
+                  )),
+                ),
+                children: [
+                  tableHeader("Full Name"),
+                  if (!AppResponsive.isMobile(context))
+                    tableHeader("Designation"),
+                  if (!AppResponsive.isMobile(context)) tableHeader(""),
+                ],
+              ),
+              for (var rowData in employees)
+                tableRow(
+                  context,
+                  name: rowData.firstName + " " + rowData.lastName,
+                  color: Colors.blue,
+                  image: "assets/user1.jpg",
+                  designation: rowData.position,
+                  user: rowData,
+                ),
+            ],
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Showing ${employees.length} Results"),
+                // Text(
+                //   "View All",
+                //   style: TextStyle(fontWeight: FontWeight.bold),
+                // ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget tableHeader(text) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 15),
+      child: Text(
+        text,
+        style: TextStyle(fontWeight: FontWeight.bold, color: AppColor.black),
+      ),
+    );
+  }
+
+  TableRow tableRow(context, {name, image, designation, color, user}) {
+    return TableRow(
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: Colors.grey,
+              width: 0.5,
+            ),
+          ),
+        ),
+        children: [
+          //Full Name
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 15),
+            child: Row(
+              children: [
+                // ClipRRect(
+                //   borderRadius: BorderRadius.circular(1000),
+                //   child: Image.asset(
+                //     image,
+                //     width: 30,
+                //   ),
+                // ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text(name)
+              ],
+            ),
+          ),
+          // Designation
+          if (!AppResponsive.isMobile(context)) Text(designation),
+          //Status
+
+          // Menu icon
+          if (!AppResponsive.isMobile(context))
+            InkWell(
+              onTap: () {
+                // EmployeeModel employeeModel = user;
+
+                setState(() {
+                  employeeModel.setEmployeeToUserModel(user);
+                  firstNameController.text = employeeModel.firstName;
+                  lastNameController.text = employeeModel.lastName;
+                  addressController.text = employeeModel.address;
+                  birth = employeeModel.birthDate;
+                  positionController.text = employeeModel.position;
+                  employeeID = employeeModel.id;
+                });
+              },
+              child: Image.asset(
+                "assets/more.png",
+                color: Colors.grey,
+                height: 30,
+              ),
+            ),
+        ]);
+  }
+
   @override
   Widget build(BuildContext context) {
-    screenHeight = 500;
+    // screenHeight = 500;
     screenWidth = 500;
+    screenHeight = MediaQuery.of(context).size.height;
+    return Row(
+      children: [
+        employeeList(),
+        SizedBox(
+          width: 20,
+        ),
+        profileDetail(),
+      ],
+    );
+  }
+
+  Container profileDetail() {
     return Container(
       width: 500,
-      alignment: Alignment.center,
+      alignment: Alignment.topLeft,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -97,24 +319,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           Align(
             alignment: Alignment.center,
-            child: Text(
-              "Employee ID: ",
-              style: const TextStyle(
-                  fontFamily: "NexaBold",
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold),
-            ),
+            child: employeeID.isEmpty
+                ? textField("Employee ID", "Employee ID", employeeIDController)
+                : Text(
+                    "Employee ID: ${employeeModel.id}",
+                    style: const TextStyle(
+                        fontFamily: "NexaBold",
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
           ),
           const SizedBox(
             height: 24,
           ),
-          UserModel.canEdit
+          employeeModel.canEdit
               ? textField("First Name", "First name", firstNameController)
-              : field("First Name", ""),
-          UserModel.canEdit
+              : field("First Name", employeeModel.firstName),
+          employeeModel.canEdit
               ? textField("Last Name", "Last name", lastNameController)
-              : field("Last Name", ""),
-          UserModel.canEdit
+              : field("Last Name", employeeModel.lastName),
+          employeeModel.canEdit
+              ? textField("Position", "Position", positionController)
+              : field("Position", employeeModel.position),
+          employeeModel.canEdit
               ? GestureDetector(
                   onTap: () {
                     showDatePicker(
@@ -157,49 +384,92 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   },
                   child: field("Date of Birth", birth),
                 )
-              : field("Date of Birth", ""),
-          UserModel.canEdit
+              : field("Date of Birth", employeeModel.birthDate),
+          employeeModel.canEdit
               ? textField("Address", "Address", addressController)
-              : field("Address", ""),
-          UserModel.canEdit
+              : field("Address", employeeModel.address),
+          employeeModel.canEdit
               ? GestureDetector(
                   onTap: () async {
                     String firstName = firstNameController.text;
                     String lastName = lastNameController.text;
+                    String positionName = positionController.text;
                     String birthDate = birth;
                     String address = addressController.text;
 
-                    if (UserModel.canEdit) {
+                    if (employeeModel.canEdit) {
                       if (firstName.isEmpty) {
-                        showSnackBar("Please enter your first name!");
+                        showSnackBar("Please enter First name!");
                       } else if (lastName.isEmpty) {
-                        showSnackBar("Please enter your last name!");
+                        showSnackBar("Please enter Last name!");
+                      } else if (positionName.isEmpty) {
+                        showSnackBar("Please enter Position!");
                       } else if (birthDate.isEmpty) {
-                        showSnackBar("Please enter your birth date!");
+                        showSnackBar("Please enter birth date!");
                       } else if (address.isEmpty) {
-                        showSnackBar("Please enter your address!");
+                        showSnackBar("Please enter address!");
                       } else {
                         await Firebase.initializeApp(
                           options: firebaseOptions(),
                         );
-                        // await FirebaseFirestore.instance
-                        //     .collection("Employee")
-                        //     .doc(UserModel.id)
-                        //     .update({
-                        //   'firstName': firstName,
-                        //   'lastName': lastName,
-                        //   'birthDate': birthDate,
-                        //   'address': address,
-                        //   'canEdit': false,
-                        // }).then((value) {
-                        //   setState(() {
-                        //     UserModel.canEdit = false;
-                        //     UserModel.firstName = firstName;
-                        //     UserModel.lastName = lastName;
-                        //     UserModel.birthDate = birthDate;
-                        //     UserModel.address = address;
-                        //   });
-                        // });
+                        if (employeeModel.id.isEmpty) {
+                          await FirebaseFirestore.instance
+                              .collection("Employee")
+                              .doc()
+                              .set({
+                            'id': employeeIDController.text,
+                            'firstName': firstName,
+                            'lastName': lastName,
+                            'birthDate': birthDate,
+                            'address': address,
+                            'canEdit': true,
+                            'position': positionName,
+                            'password': employeeIDController.text,
+                            'role': 200
+                          }).then((value) {
+                            setState(() {
+                              employeeModel.canEdit = true;
+                              employeeModel.firstName = firstName;
+                              employeeModel.lastName = lastName;
+                              employeeModel.birthDate = birthDate;
+                              employeeModel.address = address;
+                              employeeModel.position = positionName;
+                              employeeModel.id = employeeIDController.text;
+                              employees.add(employeeModel);
+                            });
+                          });
+                        } else {
+                          await FirebaseFirestore.instance
+                              .collection("Employee")
+                              .doc(employeeModel.id)
+                              .update({
+                            'firstName': firstName,
+                            'lastName': lastName,
+                            'birthDate': birthDate,
+                            'address': address,
+                            'canEdit': true,
+                            'position': positionName
+                          }).then((value) {
+                            setState(() {
+                              employeeModel.canEdit = true;
+                              employeeModel.firstName = firstName;
+                              employeeModel.lastName = lastName;
+                              employeeModel.birthDate = birthDate;
+                              employeeModel.address = address;
+                              employeeModel.position = positionName;
+                              for (EmployeeModel employee in employees) {
+                                if (employee.id == employeeModel.id) {
+                                  employee.canEdit = true;
+                                  employee.firstName = firstName;
+                                  employee.lastName = lastName;
+                                  employee.birthDate = birthDate;
+                                  employee.address = address;
+                                  employee.position = positionName;
+                                }
+                              }
+                            });
+                          });
+                        }
                       }
                     } else {
                       showSnackBar(

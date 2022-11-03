@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:employee_schedule_management/admin/common/app_colors.dart';
 import 'package:employee_schedule_management/admin/common/app_responsive.dart';
+import 'package:employee_schedule_management/model/employee_model.dart';
 import 'package:employee_schedule_management/utility/my_style.dart';
+import 'package:employee_schedule_management/utility/web_firebase_connection.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class RecruitmentDataWidget extends StatefulWidget {
@@ -9,6 +13,35 @@ class RecruitmentDataWidget extends StatefulWidget {
 }
 
 class _RecruitmentDataWidgetState extends State<RecruitmentDataWidget> {
+  List<EmployeeModel> employees = [];
+  @override
+  void initState() {
+    super.initState();
+
+    _getRecord();
+  }
+
+  void _getRecord() async {
+    try {
+      await Firebase.initializeApp(
+        options: firebaseOptions(),
+      );
+      final users = await FirebaseFirestore.instance
+          .collection("Employee")
+          .where('workingStatus', isEqualTo: true)
+          .get();
+      List<DocumentSnapshot> snapshots = users.docs;
+      for (var snapshot in snapshots) {
+        Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+
+        EmployeeModel userModel = EmployeeModel.fromMap(data);
+        setState(() {
+          employees.add(userModel);
+        });
+      }
+    } catch (e) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -21,27 +54,27 @@ class _RecruitmentDataWidgetState extends State<RecruitmentDataWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Recruitment Progress",
+                "Clock-in Employees",
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: AppColor.black,
                   fontSize: 22,
                 ),
               ),
-              Container(
-                decoration: BoxDecoration(
-                    color: MyStyle().darkColor,
-                    borderRadius: BorderRadius.circular(100)),
-                padding: EdgeInsets.symmetric(
-                  vertical: 10,
-                  horizontal: 20,
-                ),
-                child: Text(
-                  "View All",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, color: AppColor.black),
-                ),
-              )
+              // Container(
+              //   decoration: BoxDecoration(
+              //       color: MyStyle().darkColor,
+              //       borderRadius: BorderRadius.circular(100)),
+              //   padding: EdgeInsets.symmetric(
+              //     vertical: 10,
+              //     horizontal: 20,
+              //   ),
+              //   child: Text(
+              //     "View All",
+              //     style: TextStyle(
+              //         fontWeight: FontWeight.bold, color: AppColor.black),
+              //   ),
+              // )
             ],
           ),
           Divider(
@@ -68,40 +101,15 @@ class _RecruitmentDataWidgetState extends State<RecruitmentDataWidget> {
                   if (!AppResponsive.isMobile(context)) tableHeader(""),
                 ],
               ),
-
-              /// Table Data
-              tableRow(
-                context,
-                name: "Mary G Lolus",
-                color: Colors.blue,
-                image: "assets/user1.jpg",
-                designation: "Project Manager",
-                status: "Practical Round",
-              ),
-              tableRow(
-                context,
-                name: "Vince Jacob",
-                color: Colors.blue,
-                image: "assets/user2.jpg",
-                designation: "UI/UX Designer",
-                status: "Practical Round",
-              ),
-              tableRow(
-                context,
-                name: "Nell Brian",
-                color: Colors.green,
-                image: "assets/user3.jpg",
-                designation: "React Developer",
-                status: "Final Round",
-              ),
-              tableRow(
-                context,
-                name: "Vince Jacob",
-                color: Colors.yellow,
-                image: "assets/user2.jpg",
-                designation: "UI/UX Designer",
-                status: "HR Round",
-              ),
+              for (var rowData in employees)
+                tableRow(
+                  context,
+                  name: rowData.firstName + " " + rowData.lastName,
+                  color: Colors.blue,
+                  image: "assets/user1.jpg",
+                  designation: rowData.position,
+                  status: "Working",
+                ),
             ],
           ),
           Container(
@@ -109,11 +117,11 @@ class _RecruitmentDataWidgetState extends State<RecruitmentDataWidget> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("Showing 4 out of 4 Results"),
-                Text(
-                  "View All",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
+                Text("Showing ${employees.length} Results"),
+                // Text(
+                //   "View All",
+                //   style: TextStyle(fontWeight: FontWeight.bold),
+                // ),
               ],
             ),
           )
@@ -138,13 +146,13 @@ class _RecruitmentDataWidgetState extends State<RecruitmentDataWidget> {
             margin: EdgeInsets.symmetric(vertical: 15),
             child: Row(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(1000),
-                  child: Image.asset(
-                    image,
-                    width: 30,
-                  ),
-                ),
+                // ClipRRect(
+                //   borderRadius: BorderRadius.circular(1000),
+                //   child: Image.asset(
+                //     image,
+                //     width: 30,
+                //   ),
+                // ),
                 SizedBox(
                   width: 10,
                 ),

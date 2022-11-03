@@ -21,7 +21,7 @@ class NotificationCardWidget extends StatelessWidget {
                   children: [
                     TextSpan(text: "Good Morning "),
                     TextSpan(
-                      text: "Ravi Patel!",
+                      text: "..!",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                       ),
@@ -33,9 +33,9 @@ class NotificationCardWidget extends StatelessWidget {
                 height: 10,
               ),
               Text(
-                "Today you have 9 New Applications.\nAlso you need to hire 2 new UX Designers. 1\nReact Native Developer",
+                "Don’t stop thinking about tomorrow. \nIt’ll soon be here.",
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 18,
                   color: AppColor.black,
                   height: 1.5,
                 ),

@@ -47,7 +47,7 @@ class _DashboardState extends State<Dashboard> {
                               height: 20,
                             ),
                           },
-                          // RecruitmentDataWidget(),
+                          RecruitmentDataWidget(),
                         ],
                       ),
                     ),
