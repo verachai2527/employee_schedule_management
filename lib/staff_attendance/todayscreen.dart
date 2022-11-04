@@ -484,6 +484,7 @@ class _TodayScreenState extends State<TodayScreen> {
                                 'checkIn': s_checkIn,
                                 'checkOut':
                                     DateFormat('HH:mm').format(DateTime.now()),
+                                'checkOutDate': Timestamp.now(),
                                 'checkInLocation': location,
                               };
                               snap3.docs[0].reference.update(record);
@@ -516,6 +517,7 @@ class _TodayScreenState extends State<TodayScreen> {
                                           .format(DateTime.now()))
                                   .set({
                                 'date': Timestamp.now(),
+                                'checkInDate': Timestamp.now(),
                                 'checkIn':
                                     DateFormat('HH:mm').format(DateTime.now()),
                                 'checkOut': "--/--",
@@ -548,6 +550,7 @@ class _TodayScreenState extends State<TodayScreen> {
                                     DateFormat('HH:mm').format(DateTime.now()))
                                 .set({
                               'date': Timestamp.now(),
+                              'checkInDate': Timestamp.now(),
                               'checkIn':
                                   DateFormat('HH:mm').format(DateTime.now()),
                               'checkOut': "--/--",
@@ -629,6 +632,7 @@ class _TodayScreenState extends State<TodayScreen> {
                                   'checkIn': s_checkIn,
                                   'checkOut': DateFormat('HH:mm')
                                       .format(DateTime.now()),
+                                  'checkOutDate': Timestamp.now(),
                                   'checkInLocation': location,
                                 };
                                 snap3.docs[0].reference.update(record);
@@ -660,6 +664,7 @@ class _TodayScreenState extends State<TodayScreen> {
                                             .format(DateTime.now()))
                                     .set({
                                   'date': Timestamp.now(),
+                                  'checkInDate': Timestamp.now(),
                                   'checkIn': DateFormat('HH:mm')
                                       .format(DateTime.now()),
                                   'checkOut': "--/--",
@@ -694,6 +699,7 @@ class _TodayScreenState extends State<TodayScreen> {
                                           .format(DateTime.now()))
                                   .set({
                                 'date': Timestamp.now(),
+                                'checkInDate': Timestamp.now(),
                                 'checkIn':
                                     DateFormat('HH:mm').format(DateTime.now()),
                                 'checkOut': "--/--",

@@ -97,7 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Container employeeList() {
     return Container(
       width: 350,
-      height: screenHeight,
+      height: 800,
       alignment: Alignment.topLeft,
       decoration: BoxDecoration(
           color: AppColor.white, borderRadius: BorderRadius.circular(20)),
@@ -133,6 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         birth = employeeModel.birthDate;
                         positionController.text = employeeModel.position;
                         employeeID = employeeModel.id;
+                        employeeIDController.text = employeeModel.id;
                       });
                     },
                     child: Text(
@@ -283,6 +284,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Container profileDetail() {
     return Container(
       width: 500,
+      height: 800,
       alignment: Alignment.topLeft,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -441,7 +443,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         } else {
                           await FirebaseFirestore.instance
                               .collection("Employee")
-                              .doc(employeeModel.id)
+                              .doc(employeeModel.uid)
                               .update({
                             'firstName': firstName,
                             'lastName': lastName,

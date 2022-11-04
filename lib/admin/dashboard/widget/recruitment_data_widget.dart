@@ -61,20 +61,6 @@ class _RecruitmentDataWidgetState extends State<RecruitmentDataWidget> {
                   fontSize: 22,
                 ),
               ),
-              // Container(
-              //   decoration: BoxDecoration(
-              //       color: MyStyle().darkColor,
-              //       borderRadius: BorderRadius.circular(100)),
-              //   padding: EdgeInsets.symmetric(
-              //     vertical: 10,
-              //     horizontal: 20,
-              //   ),
-              //   child: Text(
-              //     "View All",
-              //     style: TextStyle(
-              //         fontWeight: FontWeight.bold, color: AppColor.black),
-              //   ),
-              // )
             ],
           ),
           Divider(
@@ -98,7 +84,6 @@ class _RecruitmentDataWidgetState extends State<RecruitmentDataWidget> {
                   if (!AppResponsive.isMobile(context))
                     tableHeader("Designation"),
                   tableHeader("Status"),
-                  if (!AppResponsive.isMobile(context)) tableHeader(""),
                 ],
               ),
               for (var rowData in employees)
@@ -179,13 +164,6 @@ class _RecruitmentDataWidgetState extends State<RecruitmentDataWidget> {
               Text(status),
             ],
           ),
-          // Menu icon
-          if (!AppResponsive.isMobile(context))
-            Image.asset(
-              "assets/more.png",
-              color: Colors.grey,
-              height: 30,
-            )
         ]);
   }
 

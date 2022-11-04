@@ -33,6 +33,7 @@ class EmployeeModel {
     this.lastName = employeeModel.lastName;
     this.profilePicLink = employeeModel.profilePicLink;
     this.position = employeeModel.position;
+    this.uid = employeeModel.uid;
   }
 
   @override

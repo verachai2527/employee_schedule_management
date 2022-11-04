@@ -1,9 +1,14 @@
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:employee_schedule_management/model/employee_model.dart';
+import 'package:employee_schedule_management/model/record_model.dart';
 import 'package:employee_schedule_management/model/user.dart';
 import 'package:employee_schedule_management/utility/my_style.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:month_year_picker/month_year_picker.dart';
+
+import 'package:path_provider/path_provider.dart';
+import 'dart:html' as webFile;
 
 class ReportWidget extends StatefulWidget {
   const ReportWidget({Key? key}) : super(key: key);
@@ -17,16 +22,23 @@ class _ReportWidgetState extends State<ReportWidget> {
   double screenWidth = 0;
 
   Color primary = MyStyle().primaryColor;
-
+  List<EmployeeModel> employees = [];
+  List<RecordModel> records = [];
   String _month = DateFormat('MMMM').format(DateTime.now());
-
+  DateTime? startDate;
+  DateTime? endDate;
+  String _dateRange = "";
+  List<DateTime?> _dialogCalendarPickerValue = [
+    DateTime.now(),
+    DateTime.now(),
+  ];
   @override
   Widget build(BuildContext context) {
     screenHeight = 500;
     screenWidth = 500;
 
     return Container(
-      width: 600,
+      width: 900,
       alignment: Alignment.center,
       child: Column(
         children: [
@@ -38,202 +50,206 @@ class _ReportWidgetState extends State<ReportWidget> {
               style: TextStyle(
                 fontFamily: "NexaBold",
                 fontSize: screenWidth / 18,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          Stack(
+          Column(
             children: [
               Container(
+                width: 900,
                 alignment: Alignment.centerLeft,
                 margin: const EdgeInsets.only(top: 32),
                 child: Text(
-                  _month,
+                  _dateRange,
                   style: TextStyle(
                     fontFamily: "NexaBold",
-                    fontSize: screenWidth / 18,
+                    fontSize: screenWidth / 22,
                   ),
                 ),
               ),
-              Container(
-                alignment: Alignment.centerRight,
-                margin: const EdgeInsets.only(top: 32),
-                child: GestureDetector(
-                  onTap: () async {
-                    final month = await showMonthYearPicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2022),
-                        lastDate: DateTime(2099),
-                        builder: (context, child) {
-                          return Theme(
-                            data: Theme.of(context).copyWith(
-                              colorScheme: ColorScheme.light(
-                                primary: primary,
-                                secondary: primary,
-                                onSecondary: Colors.white,
-                              ),
-                              textButtonTheme: TextButtonThemeData(
-                                style: TextButton.styleFrom(
-                                  primary: primary,
-                                ),
-                              ),
-                              textTheme: const TextTheme(
-                                headline4: TextStyle(
-                                  fontFamily: "NexaBold",
-                                ),
-                                overline: TextStyle(
-                                  fontFamily: "NexaBold",
-                                ),
-                                button: TextStyle(
-                                  fontFamily: "NexaBold",
-                                ),
-                              ),
-                            ),
-                            child: child!,
-                          );
-                        });
-
-                    if (month != null) {
-                      setState(() {
-                        _month = DateFormat('MMMM').format(month);
-                      });
-                    }
-                  },
-                  child: Text(
-                    "Pick a Month",
-                    style: TextStyle(
-                      fontFamily: "NexaBold",
-                      fontSize: screenWidth / 18,
-                    ),
-                  ),
-                ),
-              ),
+              //////////
+              _buildCalendarDialogButton(),
+              _exportButton(),
+              //////////
             ],
           ),
-          SizedBox(
-            height: screenHeight / 1.45,
-            child: StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection("Employee")
-                  .doc(UserModel.id)
-                  .collection("Record")
-                  .orderBy('date', descending: true)
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasData) {
-                  final snap = snapshot.data!.docs;
-                  return ListView.builder(
-                    itemCount: snap.length,
-                    itemBuilder: (context, index) {
-                      return DateFormat('MMMM')
-                                  .format(snap[index]['date'].toDate()) ==
-                              _month
-                          ? Container(
-                              margin: EdgeInsets.only(
-                                  top: index > 0 ? 12 : 0, left: 6, right: 6),
-                              height: 150,
-                              decoration: const BoxDecoration(
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black26,
-                                    blurRadius: 10,
-                                    offset: Offset(2, 2),
-                                  ),
-                                ],
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20)),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      margin: const EdgeInsets.only(),
-                                      decoration: BoxDecoration(
-                                        color: primary,
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(20)),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          DateFormat('EE\ndd').format(
-                                              snap[index]['date'].toDate()),
-                                          style: TextStyle(
-                                            fontFamily: "NexaBold",
-                                            fontSize: screenWidth / 18,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "Check In",
-                                          style: TextStyle(
-                                            fontFamily: "NexaRegular",
-                                            fontSize: screenWidth / 20,
-                                            color: Colors.black54,
-                                          ),
-                                        ),
-                                        Text(
-                                          snap[index]['checkIn'],
-                                          style: TextStyle(
-                                            fontFamily: "NexaBold",
-                                            fontSize: screenWidth / 18,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "Check Out",
-                                          style: TextStyle(
-                                            fontFamily: "NexaRegular",
-                                            fontSize: screenWidth / 20,
-                                            color: Colors.black54,
-                                          ),
-                                        ),
-                                        Text(
-                                          snap[index]['checkOut'],
-                                          style: TextStyle(
-                                            fontFamily: "NexaBold",
-                                            fontSize: screenWidth / 18,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : const SizedBox();
-                    },
-                  );
-                } else {
-                  return const SizedBox();
-                }
-              },
+        ],
+      ),
+    );
+  }
+
+  _buildCalendarDialogButton() {
+    final config = CalendarDatePicker2WithActionButtonsConfig(
+      calendarType: CalendarDatePicker2Type.range,
+      selectedDayHighlightColor: Colors.purple[800],
+      shouldCloseDialogAfterCancelTapped: true,
+    );
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ElevatedButton(
+            onPressed: () async {
+              final values = await showCalendarDatePicker2Dialog(
+                context: context,
+                config: config,
+                dialogSize: const Size(325, 400),
+                borderRadius: BorderRadius.circular(15),
+                initialValue: _dialogCalendarPickerValue,
+                dialogBackgroundColor: Colors.white,
+                selectableDayPredicate: (day) => !day
+                    .difference(_dialogCalendarPickerValue[0]!
+                        .subtract(const Duration(days: 5)))
+                    .isNegative,
+              );
+              if (values != null) {
+                // ignore: avoid_print
+                String dateRange = _getValueText(
+                  config.calendarType,
+                  values,
+                );
+                // print(dateRange);
+                setState(() {
+                  _dialogCalendarPickerValue = values;
+                  _dateRange = dateRange;
+                });
+              }
+            },
+            child: const Text(
+              "Choose date range",
+              style: TextStyle(
+                fontFamily: "NexaBold",
+                fontSize: 500 / 18,
+              ),
             ),
           ),
         ],
       ),
     );
+  }
+
+  _exportButton() {
+    return GestureDetector(
+      onTap: () async {
+        List<String> exportFile = [];
+        String header =
+            "Employee ID, First Name, Last Name, Position, Number of Shifts, Total Duration Hours, Total Duration Minutes\n";
+        exportFile.add(header);
+        final users = await FirebaseFirestore.instance
+            .collection("Employee")
+            .where('role', isEqualTo: 200)
+            .get();
+        List<DocumentSnapshot> snapshots = users.docs;
+        for (var snapshot in snapshots) {
+          Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+          EmployeeModel userModel = EmployeeModel.fromMap(data);
+          userModel.uid = snapshot.id;
+          setState(() {
+            employees.add(userModel);
+          });
+          final records1 = await FirebaseFirestore.instance
+              .collection("Employee")
+              .doc(snapshot.id)
+              .collection("Record")
+              .where('date', isGreaterThanOrEqualTo: startDate)
+              .where('date', isLessThanOrEqualTo: endDate)
+              .orderBy('date', descending: true)
+              .get();
+          List<DocumentSnapshot> snapshots_records = records1.docs;
+          int hours = 0;
+          int minutes = 0;
+          String record = "";
+          int shifts = 0;
+          for (var snapshot_rec in snapshots_records) {
+            Map<String, dynamic> data02 =
+                snapshot_rec.data()! as Map<String, dynamic>;
+            RecordModel recordModel = RecordModel.fromMap(data02);
+            recordModel.date = data02['date'].toDate();
+            if (data02['checkInDate'] != null &&
+                data02['checkOutDate'] != null) {
+              DateTime dt1 = data02['checkInDate'].toDate();
+              DateTime dt2 = data02['checkOutDate'].toDate();
+              Duration diff = dt2.difference(dt1);
+              hours += diff.inHours;
+              minutes += diff.inMinutes % 60;
+              if ((minutes / 60) > 0) {
+                hours += (minutes / 60).toInt();
+                minutes = minutes % 60;
+              }
+              recordModel.setEmployeeToUserModel(userModel);
+              setState(() {
+                records.add(recordModel);
+              });
+              shifts++;
+            }
+          }
+          record =
+              "${userModel.id},${userModel.firstName},${userModel.lastName},${userModel.position},${shifts},${hours},${minutes}\n";
+
+          exportFile.add(record);
+        }
+
+        var blob = webFile.Blob(exportFile, 'text/plain', 'native');
+        var anchorElement = webFile.AnchorElement(
+          href: webFile.Url.createObjectUrlFromBlob(blob).toString(),
+        )
+          ..setAttribute("download", "data.csv")
+          ..click();
+      },
+      child: Container(
+        height: kToolbarHeight,
+        width: screenWidth,
+        margin: const EdgeInsets.only(bottom: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4),
+          color: primary,
+        ),
+        child: const Center(
+          child: Text(
+            "EXPORT FILE",
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: "NexaBold",
+              fontSize: 16,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getValueText(
+    CalendarDatePicker2Type datePickerType,
+    List<DateTime?> values,
+  ) {
+    var valueText = (values.isNotEmpty ? values[0] : null)
+        .toString()
+        .replaceAll('00:00:00.000', '');
+
+    if (datePickerType == CalendarDatePicker2Type.multi) {
+      valueText = values.isNotEmpty
+          ? values
+              .map((v) => v.toString().replaceAll('00:00:00.000', ''))
+              .join(', ')
+          : 'null';
+    } else if (datePickerType == CalendarDatePicker2Type.range) {
+      if (values.isNotEmpty) {
+        final startDate = values[0].toString().replaceAll('00:00:00.000', '');
+        final endDate = values.length > 1
+            ? values[1].toString().replaceAll('00:00:00.000', '')
+            : 'null';
+        valueText = 'START DATE :: $startDate  END DATE :: $endDate';
+        setState(() {
+          this.startDate = values[0];
+          this.endDate = values.length > 1 ? values[1] : null;
+        });
+      } else {
+        return 'null';
+      }
+    }
+
+    return valueText;
   }
 }

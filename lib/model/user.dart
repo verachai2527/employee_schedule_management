@@ -1,5 +1,3 @@
-import 'package:employee_schedule_management/model/employee_model.dart';
-
 class UserModel {
   static String id = " ";
   static String employeeId = " ";
