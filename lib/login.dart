@@ -29,9 +29,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // print('Login Screen1');
-    // final bool isKeyboardVisible =
-    // KeyboardVisibilityProvider.isKeyboardVisible(context);
     screenHeight = 500;
     screenWidth = 500;
 
@@ -113,9 +110,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         try {
                           if (password == snap.docs[0]['password']) {
-                            print("test");
+                            // print("test");
                             String role = snap.docs[0]['role'].toString();
-                            print("role::" + role);
+                            // print("role::" + role);
                             sharedPreferences =
                                 await SharedPreferences.getInstance();
                             sharedPreferences.setString('role', role);
@@ -125,6 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               setState(() {
                                 UserModel.employeeId =
                                     sharedPreferences.getString('employeeId')!;
+                                UserModel.canEdit = false;
                               });
                               Navigator.pushReplacement(
                                   context,

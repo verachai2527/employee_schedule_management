@@ -206,7 +206,7 @@ class _TodayScreenState extends State<TodayScreen> {
           .collection("Employee")
           .where('id', isEqualTo: UserModel.employeeId)
           .get();
-      print('EmployeeID:' + snap.docs[0].id);
+      // print('EmployeeID:' + snap.docs[0].id);
       QuerySnapshot snap2 = await FirebaseFirestore.instance
           .collection("Employee")
           .doc(snap.docs[0].id)

@@ -25,6 +25,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    _getCredentials();
+  }
+
+  void _getCredentials() async {
+    try {
+      QuerySnapshot snap = await FirebaseFirestore.instance
+          .collection("Employee")
+          .where('id', isEqualTo: UserModel.employeeId)
+          .get();
+      setState(() {
+        UserModel.canEdit = snap.docs[0]['canEdit'];
+        UserModel.firstName = snap.docs[0]['firstName'];
+        UserModel.lastName = snap.docs[0]['lastName'];
+        UserModel.birthDate = snap.docs[0]['birthDate'];
+        UserModel.address = snap.docs[0]['address'];
+
+        firstNameController.text = snap.docs[0]['firstName'];
+        lastNameController.text = snap.docs[0]['lastName'];
+        addressController.text = snap.docs[0]['address'];
+      });
+    } catch (e) {
+      return;
+    }
+  }
 
   void pickUploadProfilePic() async {
     final image = await ImagePicker().pickImage(
@@ -191,7 +218,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 'lastName': lastName,
                                 'birthDate': birthDate,
                                 'address': address,
-                                'canEdit': true,
+                                'canEdit': false,
                               }).then((value) {
                                 setState(() {
                                   UserModel.canEdit = false;

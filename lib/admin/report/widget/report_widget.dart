@@ -29,7 +29,8 @@ class _ReportWidgetState extends State<ReportWidget> {
   DateTime? endDate;
   String _dateRange = "";
   List<DateTime?> _dialogCalendarPickerValue = [
-    DateTime.now(),
+    DateTime(
+        DateTime.now().year, DateTime.now().month, DateTime.now().day - 14),
     DateTime.now(),
   ];
   @override
@@ -121,7 +122,7 @@ class _ReportWidgetState extends State<ReportWidget> {
               "Choose date range",
               style: TextStyle(
                 fontFamily: "NexaBold",
-                fontSize: 500 / 18,
+                fontSize: 500 / 20,
               ),
             ),
           ),
@@ -212,7 +213,7 @@ class _ReportWidgetState extends State<ReportWidget> {
             style: TextStyle(
               color: Colors.white,
               fontFamily: "NexaBold",
-              fontSize: 16,
+              fontSize: 20,
             ),
           ),
         ),

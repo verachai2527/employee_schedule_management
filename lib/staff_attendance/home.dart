@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _startLocationService();
     getId().then((value) {
       _getCredentials();
-      _getProfilePic();
+      // _getProfilePic();
     });
   }
 
@@ -106,9 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: IndexedStack(
         index: currentIndex,
         children: [
-          new CalendarScreen(),
-          new TodayScreen(),
-          new ProfileScreen(),
+          CalendarScreen(),
+          TodayScreen(),
+          ProfileScreen(),
         ],
       ),
       bottomNavigationBar: Container(

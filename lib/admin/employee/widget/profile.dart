@@ -295,7 +295,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               pickUploadProfilePic();
             },
             child: Container(
-              margin: const EdgeInsets.only(top: 80, bottom: 24),
+              margin: const EdgeInsets.only(top: 0, bottom: 24),
               height: 120,
               width: 120,
               alignment: Alignment.center,
